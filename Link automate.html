@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tab Opener Test</title>
+<style>
+  body { font-family: system-ui, sans-serif; display: flex; flex-direction: column;
+         align-items: center; justify-content: center; min-height: 100vh; margin: 0;
+         background: #f4f4f6; color: #222; }
+  label { margin: 6px 0; }
+  input { padding: 6px; width: 90px; font-size: 1rem; }
+  #status { font-size: 1.3rem; margin: 20px 0; min-height: 2rem; }
+  button { font-size: 1.1rem; padding: 12px 32px; margin: 0 8px; border: 0;
+           border-radius: 8px; cursor: pointer; color: #fff; }
+  #startBtn { background: #2e7d32; }
+  #stopBtn  { background: #c62828; }
+  button:disabled { opacity: .4; cursor: not-allowed; }
+</style>
+</head>
+<body>
+  <h1>Tab Opener (test)</h1>
+  <label>Test URL: <code>https://asiafilm.org/4/5e5a1d6fd81ab9b622a469dc1cd9ec11</code></label>
+  <label>Open every <input id="secs" type="number" min="1" value="3"> seconds</label>
+  <div id="status">Press START</div>
+  <div>
+    <button id="startBtn">START</button>
+    <button id="stopBtn" disabled>STOP</button>
+  </div>
+
+<script>
+  const TEST_URL = "https://asiafilm.org/4/5e5a1d6fd81ab9b622a469dc1cd9ec11";
+  const statusEl = document.getElementById("status");
+  const startBtn = document.getElementById("startBtn");
+  const stopBtn  = document.getElementById("stopBtn");
+  const secsEl   = document.getElementById("secs");
+  let timer = null, count = 0;
+
+  startBtn.addEventListener("click", () => {
+    if (timer) return;
+    const secs = Math.max(1, parseInt(secsEl.value, 10) || 3);
+    count = 0;
+    startBtn.disabled = true;
+    stopBtn.disabled = false;
+    statusEl.textContent = "Running... next open in " + secs + "s";
+    timer = setInterval(() => {
+      window.open(TEST_URL, "_blank", "noopener,noreferrer");
+      count++;
+      statusEl.textContent = "Opened " + count + " time(s). Press STOP to end.";
+    }, secs * 1000);
+  });
+
+  stopBtn.addEventListener("click", () => {
+    clearInterval(timer);
+    timer = null;
+    startBtn.disabled = false;
+    stopBtn.disabled = true;
+    statusEl.textContent = "Stopped after " + count + " open(s).";
+  });
+</script>
+</body>
+</html>
